@@ -1,0 +1,178 @@
+Index: layoutengine.cpp
+===================================================================
+--- layoutengine.cpp	(revision 215)
++++ layoutengine.cpp	(revision 220)
+@@ -565,7 +565,9 @@
+     REGISTER_TYPE(LayoutEngine, m);
+ 
+     INSTALL_ENUM(ScriptCode, "zyyy", zyyyScriptCode);
++#if U_ICU_VERSION_HEX >= 0x04040200
+     INSTALL_ENUM(ScriptCode, "zinh", zinhScriptCode);
++#endif
+     INSTALL_ENUM(ScriptCode, "qaai", qaaiScriptCode);
+     INSTALL_ENUM(ScriptCode, "arab", arabScriptCode);
+     INSTALL_ENUM(ScriptCode, "armn", armnScriptCode);
+Index: CHANGES
+===================================================================
+--- CHANGES	(revision 215)
++++ CHANGES	(revision 220)
+@@ -1,6 +1,15 @@
+ 
+ For bug <NUM>, see http://bugzilla.osafoundation.org/show_bug.cgi?id=<NUM>
+ 
++Version 1.6 ->
++------------------
++  - added missing #include for <unicode/uscript.h>
++  - fixed issues building against ICU 4.2
++  - added wrapper for Script.isRightToLeft() (bug 13081)
++  - added support for ICU 53.1 (bug 13110)
++  - added wrappers for other Script functions introduced in ICU 51
++  - 
++
+ Version 1.5 -> 1.6
+ ------------------
+   - removed wrappers for some layoutengine.cpp internal flags (bug 13074)
+Index: test/test_Collator.py
+===================================================================
+--- test/test_Collator.py	(revision 215)
++++ test/test_Collator.py	(revision 220)
+@@ -128,7 +128,7 @@
+ 
+     def testCollatorLoading(self):
+ 
+-        if ICU_VERSION >= '4.6':
++        if ICU_VERSION >= '4.6' and ICU_VERSION <= '52.1':
+             collator = self.LoadCollatorFromRules()
+             key0 = collator.getSortKey(u'\u3069\u3052\u3056')
+             bin = collator.cloneBinary()
+Index: script.cpp
+===================================================================
+--- script.cpp	(revision 215)
++++ script.cpp	(revision 220)
+@@ -32,6 +32,7 @@
+ #include "macros.h"
+ 
+ DECLARE_CONSTANTS_TYPE(UScriptCode);
++DECLARE_CONSTANTS_TYPE(UScriptUsage);
+ 
+ /* Script */
+ 
+@@ -48,6 +49,13 @@
+ static PyObject *t_script_getName(t_script *self);
+ static PyObject *t_script_getShortName(t_script *self);
+ static PyObject *t_script_getScriptCode(t_script *self);
++#if U_ICU_VERSION_HEX >= VERSION_HEX(51, 0, 0)
++static PyObject *t_script_isRightToLeft(t_script *self);
++static PyObject *t_script_isCased(t_script *self);
++static PyObject *t_script_breaksBetweenLetters(t_script *self);
++static PyObject *t_script_getSampleString(t_script *self);
++static PyObject *t_script_getUsage(t_script *self);
++#endif
+ static PyObject *t_script_getCode(PyTypeObject *type, PyObject *arg);
+ static PyObject *t_script_getScript(PyTypeObject *type, PyObject *arg);
+ static PyObject *t_script_hasScript(PyTypeObject *type, PyObject *args);
+@@ -57,6 +65,13 @@
+     DECLARE_METHOD(t_script, getName, METH_NOARGS),
+     DECLARE_METHOD(t_script, getShortName, METH_NOARGS),
+     DECLARE_METHOD(t_script, getScriptCode, METH_NOARGS),
++#if U_ICU_VERSION_HEX >= VERSION_HEX(51, 0, 0)
++    DECLARE_METHOD(t_script, isRightToLeft, METH_NOARGS),
++    DECLARE_METHOD(t_script, isCased, METH_NOARGS),
++    DECLARE_METHOD(t_script, breaksBetweenLetters, METH_NOARGS),
++    DECLARE_METHOD(t_script, getSampleString, METH_NOARGS),
++    DECLARE_METHOD(t_script, getUsage, METH_NOARGS),
++#endif
+     DECLARE_METHOD(t_script, getCode, METH_O | METH_CLASS),
+     DECLARE_METHOD(t_script, getScript, METH_O | METH_CLASS),
+     DECLARE_METHOD(t_script, hasScript, METH_VARARGS | METH_CLASS),
+@@ -117,6 +132,48 @@
+     return PyInt_FromLong(self->code);
+ }
+ 
++#if U_ICU_VERSION_HEX >= VERSION_HEX(51, 0, 0)
++static PyObject *t_script_isRightToLeft(t_script *self)
++{
++    if (uscript_isRightToLeft(self->code))
++        Py_RETURN_TRUE;
++
++    Py_RETURN_FALSE;
++}
++
++static PyObject *t_script_isCased(t_script *self)
++{
++    if (uscript_isCased(self->code))
++        Py_RETURN_TRUE;
++
++    Py_RETURN_FALSE;
++}
++
++static PyObject *t_script_breaksBetweenLetters(t_script *self)
++{
++    if (uscript_breaksBetweenLetters(self->code))
++        Py_RETURN_TRUE;
++
++    Py_RETURN_FALSE;
++}
++
++static PyObject *t_script_getSampleString(t_script *self)
++{
++    UChar dest[32];
++    int32_t count;
++
++    STATUS_CALL(count = uscript_getSampleString(self->code, dest, sizeof(dest),
++                                                &status));
++
++    return PyUnicode_FromUnicodeString(dest, count);
++}
++
++static PyObject *t_script_getUsage(t_script *self)
++{
++    return PyInt_FromLong(uscript_getUsage(self->code));
++}
++#endif
++
+ static PyObject *t_script_getCode(PyTypeObject *type, PyObject *arg)
+ {
+     charsArg name;
+@@ -235,6 +292,7 @@
+ void _init_script(PyObject *m)
+ {
+     INSTALL_CONSTANTS_TYPE(UScriptCode, m);
++    INSTALL_CONSTANTS_TYPE(UScriptUsage, m);
+     INSTALL_STRUCT(Script, m);
+ 
+     INSTALL_ENUM(UScriptCode, "COMMON", USCRIPT_COMMON);
+@@ -412,4 +470,13 @@
+     INSTALL_ENUM(UScriptCode, "KHOJKI", USCRIPT_KHOJKI);
+     INSTALL_ENUM(UScriptCode, "TIRHUTA", USCRIPT_TIRHUTA);
+ #endif
++
++#if U_ICU_VERSION_HEX >= VERSION_HEX(51, 0, 0)
++    INSTALL_ENUM(UScriptUsage, "NOT_ENCODED", USCRIPT_USAGE_NOT_ENCODED);
++    INSTALL_ENUM(UScriptUsage, "UNKNOWN", USCRIPT_USAGE_UNKNOWN);
++    INSTALL_ENUM(UScriptUsage, "EXCLUDED", USCRIPT_USAGE_EXCLUDED);
++    INSTALL_ENUM(UScriptUsage, "LIMITED_USE", USCRIPT_USAGE_LIMITED_USE);
++    INSTALL_ENUM(UScriptUsage, "ASPIRATIONAL", USCRIPT_USAGE_ASPIRATIONAL);
++    INSTALL_ENUM(UScriptUsage, "RECOMMENDED", USCRIPT_USAGE_RECOMMENDED);
++#endif
+ }
+Index: common.h
+===================================================================
+--- common.h	(revision 215)
++++ common.h	(revision 220)
+@@ -117,6 +117,7 @@
+ #include <unicode/caniter.h>
+ #include <unicode/coleitr.h>
+ #include <unicode/coll.h>
++#include <unicode/sortkey.h>
+ #include <unicode/tblcoll.h>
+ #include <unicode/ucsdet.h>
+ #include <unicode/uidna.h>
+@@ -131,6 +132,7 @@
+ #include <unicode/normlzr.h>
+ #include <unicode/search.h>
+ #include <unicode/stsearch.h>
++#include <unicode/uscript.h>
+ 
+ #define VERSION_HEX(major, minor, patch) \
+   (((major) << 24) | ((minor) << 16) | ((patch) << 8))
