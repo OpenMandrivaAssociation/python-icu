@@ -12,9 +12,10 @@ URL:		http://pyicu.osafoundation.org/
 Source0:	http://pypi.python.org/packages/source/P/%{realname}/%{realname}-%{version}.tar.gz
 Patch0:		PyICU-1.6-svnrev220.patch
 Patch1:		0001-disable-failing-test.patch
-BuildRequires:	python-devel
-BuildRequires:	python-setuptools
+BuildRequires:	python3-devel
+BuildRequires:	python3-setuptools
 BuildRequires:	icu-devel
+%rename	python3-icu
 
 %description
 PyICU is Python extension wrapping IBM's International Components
@@ -23,11 +24,11 @@ C/C++ and Java libraries providing Unicode and Globalization support
 for software applications. ICU is widely portable and gives applications
 the same results on all platforms and between C/C++ and Javasoftware.
 
-%package -n python3-%{module}
+%package -n python2-%{module}
 Summary:	Python extension wrapping IBM's ICU C++ libraries
 Group:		Development/Python
-BuildRequires:	python3-devel
-BuildRequires:	python3egg(setuptools)
+BuildRequires:	python2-devel
+BuildRequires:	pythonegg(setuptools)
 
 %description -n python3-%{module}
 PyICU is Python extension wrapping IBM's International Components
@@ -72,7 +73,7 @@ popd
 %doc LICENSE README CHANGES CREDITS
 %{python_sitearch}/
 
-%files -n python3-%{module}
+%files -n python2-%{module}
 %doc LICENSE README CHANGES CREDITS
-%{python3_sitearch}/
+%{python2_sitearch}/
 
