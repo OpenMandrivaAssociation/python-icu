@@ -13,7 +13,7 @@ Source0:	http://pypi.python.org/packages/source/P/%{realname}/%{realname}-%{vers
 Patch0:		PyICU-1.6-svnrev220.patch
 Patch1:		0001-disable-failing-test.patch
 BuildRequires:	python3-devel
-BuildRequires:	python3-setuptools
+BuildRequires:	python-setuptools
 BuildRequires:	icu-devel
 %rename	python3-icu
 
@@ -30,7 +30,7 @@ Group:		Development/Python
 BuildRequires:	python2-devel
 BuildRequires:	pythonegg(setuptools)
 
-%description -n python3-%{module}
+%description -n python2-%{module}
 PyICU is Python extension wrapping IBM's International Components
 for Unicode C++ library (ICU). ICU is a mature, widely used set of
 C/C++ and Java libraries providing Unicode and Globalization support
@@ -45,21 +45,21 @@ the same results on all platforms and between C/C++ and Javasoftware.
 cp -a . %{py3dir}
 
 %build
-%{__python} setup.py build
+%{__python2} setup.py build
 
 pushd %{py3dir}
 %{__python3} setup.py build
 popd
 
 %check
-%{__python} setup.py test
+%{__python2} setup.py test
 
 pushd %{py3dir}
 #%{__python3} setup.py test
 popd
 
 %install
-%{__python} setup.py install --skip-build --root %{buildroot}
+%{__python2} setup.py install --skip-build --root %{buildroot}
 # Remove tests
 rm -rf %{buildroot}%{python_sitearch}/tests
 
