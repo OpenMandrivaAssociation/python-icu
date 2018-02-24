@@ -3,14 +3,13 @@
 %define		realname PyICU
 %define		module icu
 Name:		python-%{module}
-Version:	1.6
+Version:	2.0.3
 Release:	1
 Summary:	Python extension wrapping IBM's ICU C++ libraries
 Group:		Development/Python
 License:	MIT
-URL:		http://pyicu.osafoundation.org/
-Source0:	http://pypi.python.org/packages/source/P/%{realname}/%{realname}-%{version}.tar.gz
-Patch0:		PyICU-1.6-svnrev220.patch
+URL:		https://github.com/ovalhub/pyicu
+Source0:	https://pypi.python.org/packages/source/P/%{realname}/%{realname}-%{version}.tar.gz
 Patch1:		0001-disable-failing-test.patch
 BuildRequires:	python3-devel
 BuildRequires:	python-setuptools
@@ -39,12 +38,14 @@ the same results on all platforms and between C/C++ and Javasoftware.
 
 %prep
 %setup -q -n %{realname}-%{version}
-%patch0 -p0 -b .r220
-%patch1 -p0
+%apply_patches
 
 cp -a . %{py3dir}
 
 %build
+export CC=gcc
+export CXX=g++
+
 %{__python2} setup.py build
 
 pushd %{py3dir}
@@ -70,10 +71,10 @@ rm -rf %{buildroot}%{python3_sitearch}/tests
 popd
 
 %files
-%doc LICENSE README CHANGES CREDITS
+%doc LICENSE README.md CHANGES CREDITS
 %{python_sitearch}/
 
 %files -n python2-%{module}
-%doc LICENSE README CHANGES CREDITS
+%doc LICENSE README.md CHANGES CREDITS
 %{python2_sitearch}/
 
