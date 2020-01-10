@@ -38,7 +38,7 @@ the same results on all platforms and between C/C++ and Javasoftware.
 
 %prep
 %setup -q -n %{realname}-%{version}
-%apply_patches
+%autopatch -p1
 
 cp -a . %{py3dir}
 
