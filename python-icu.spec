@@ -12,7 +12,7 @@ URL:		https://gitlab.pyicu.org/main/pyicu
 Source0:	https://pypi.python.org/packages/source/P/%{realname}/%{realname}-%{version}.tar.gz
 Patch1:		0001-disable-failing-test.patch
 BuildRequires:	python3-devel
-BuildRequires:	python-setuptools
+BuildRequires:	python-pip
 BuildRequires:	icu-devel
 %rename	python3-icu
 
