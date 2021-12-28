@@ -1,4 +1,2 @@
-removed_sources:
-  PyICU-1.6.tar.gz: 6e3166baddb8c0bf2b47e60ea8cfc63106edfacd
 sources:
-  PyICU-2.0.3.tar.gz: 4d4ba5b7da720c615083af763e87862f3b4285a4
+  PyICU-2.8.tar.gz: dcfcf5393466dcf83859f26c6ccfa0b49c007e41

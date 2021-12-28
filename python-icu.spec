@@ -3,12 +3,12 @@
 %define		realname PyICU
 %define		module icu
 Name:		python-%{module}
-Version:	2.0.3
+Version:	2.8
 Release:	1
 Summary:	Python extension wrapping IBM's ICU C++ libraries
 Group:		Development/Python
 License:	MIT
-URL:		https://github.com/ovalhub/pyicu
+URL:		https://gitlab.pyicu.org/main/pyicu
 Source0:	https://pypi.python.org/packages/source/P/%{realname}/%{realname}-%{version}.tar.gz
 Patch1:		0001-disable-failing-test.patch
 BuildRequires:	python3-devel
@@ -27,7 +27,7 @@ the same results on all platforms and between C/C++ and Javasoftware.
 Summary:	Python extension wrapping IBM's ICU C++ libraries
 Group:		Development/Python
 BuildRequires:	python2-devel
-BuildRequires:	pythonegg(setuptools)
+BuildRequires:	python2dist(setuptools)
 
 %description -n python2-%{module}
 PyICU is Python extension wrapping IBM's International Components
@@ -43,9 +43,6 @@ the same results on all platforms and between C/C++ and Javasoftware.
 cp -a . %{py3dir}
 
 %build
-export CC=gcc
-export CXX=g++
-
 %{__python2} setup.py build
 
 pushd %{py3dir}
@@ -53,10 +50,10 @@ pushd %{py3dir}
 popd
 
 %check
-%{__python2} setup.py test
+#%{__python2} setup.py test
 
 pushd %{py3dir}
-#%{__python3} setup.py test
+%{__python3} setup.py test
 popd
 
 %install
