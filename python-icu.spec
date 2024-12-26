@@ -1,7 +1,7 @@
 %define		realname PyICU
 %define		module icu
 Name:		python-%{module}
-Version:	2.11
+Version:	2.14
 Release:	1
 Summary:	Python extension wrapping IBM's ICU C++ libraries
 Group:		Development/Python
