@@ -22,7 +22,7 @@ for software applications. ICU is widely portable and gives applications
 the same results on all platforms and between C/C++ and Javasoftware.
 
 %prep
-%autosetup -p1 -n %{realname}-%{version}
+%autosetup -p1 -n pyicu-%{version}
 
 %build
 python setup.py build
