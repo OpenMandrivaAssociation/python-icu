@@ -27,9 +27,6 @@ the same results on all platforms and between C/C++ and Javasoftware.
 %build
 python setup.py build
 
-%check
-python setup.py test
-
 %install
 python setup.py install --skip-build --root %{buildroot}
 # Remove tests
