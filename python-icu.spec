@@ -2,7 +2,7 @@
 %define		module icu
 Name:		python-%{module}
 Version:	2.14
-Release:	3
+Release:	4
 Summary:	Python extension wrapping IBM's ICU C++ libraries
 Group:		Development/Python
 License:	MIT
