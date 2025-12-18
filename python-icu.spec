@@ -7,7 +7,7 @@ Summary:	Python extension wrapping IBM's ICU C++ libraries
 Group:		Development/Python
 License:	MIT
 URL:		https://gitlab.pyicu.org/main/pyicu
-Source0:	https://pypi.python.org/packages/source/P/%{realname}/%{realname}-%{version}.tar.gz
+Source0:	https://pypi.python.org/packages/source/p/pyicu/pyicu-%{version}.tar.gz
 Patch1:		0001-disable-failing-test.patch
 BuildRequires:	python3-devel
 BuildRequires:	python%{pyver}dist-(pip)
