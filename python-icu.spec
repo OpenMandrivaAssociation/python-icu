@@ -1,6 +1,7 @@
 %define module icu
 %define oname PyICU
-%bcond tests 1
+# disable tests for ABF, pass locally.
+%bcond tests 0
 
 Name:		python-icu
 Version:	2.16.2
