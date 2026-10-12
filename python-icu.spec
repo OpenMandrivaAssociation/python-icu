@@ -5,7 +5,7 @@
 
 Name:		python-icu
 Version:	2.16.2
-Release:	2
+Release:	3
 Summary:	Python extension wrapping IBM's ICU C++ libraries
 Group:		Development/Python
 License:	MIT
