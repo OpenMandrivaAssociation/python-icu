@@ -4,8 +4,8 @@
 %bcond tests 0
 
 Name:		python-icu
-Version:	2.16.2
-Release:	3
+Version:	2.17
+Release:	1
 Summary:	Python extension wrapping IBM's ICU C++ libraries
 Group:		Development/Python
 License:	MIT
